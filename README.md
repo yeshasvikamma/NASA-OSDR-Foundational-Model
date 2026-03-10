@@ -150,7 +150,7 @@ See [`02_data_preparation/README.md`](02_data_preparation/README.md) for full de
 
 ### Phase 3 -- Pre-train BulkFormer
 
-Pre-train the BulkFormer model on ARCHS4 data using multi-GPU distributed training.
+Pre-train the BulkFormer model on ARCHS4 data using PyTorch Lightning with multi-GPU DDP, mixed precision, cosine warmup LR scheduling, W&B experiment tracking, and torchmetrics.
 
 ```bash
 cd 03_pretrain_performer/
@@ -158,11 +158,14 @@ cd 03_pretrain_performer/
 # Submit multi-GPU training job
 sbatch pretrain.slurm
 
-# Or run interactively with torchrun
-torchrun --nproc_per_node=2 pretrain_bulkformer.py --data-dir ../data
+# Or run interactively (Lightning auto-detects GPUs)
+python pretrain_bulkformer.py
+
+# Override any config value from the CLI
+python pretrain_bulkformer.py training.lr=5e-5 training.batch_size=8
 ```
 
-See [`03_pretrain_performer/README.md`](03_pretrain_performer/README.md) for full details.
+All hyperparameters are in `configs/pretrain.yaml`. See [`03_pretrain_performer/README.md`](03_pretrain_performer/README.md) for full details.
 
 ### Phase 4 -- Fine-tune on OSDR Data
 
@@ -173,9 +176,12 @@ cd 04_finetune_osdr/
 
 # Runs data preparation + fine-tuning in a single job
 sbatch finetune.slurm
+
+# Or run fine-tuning interactively with config overrides
+python finetune_bulkformer.py training.freeze_layers=1
 ```
 
-See [`04_finetune_osdr/README.md`](04_finetune_osdr/README.md) for full details.
+All hyperparameters are in `configs/finetune.yaml`. See [`04_finetune_osdr/README.md`](04_finetune_osdr/README.md) for full details.
 
 ---
 
@@ -229,7 +235,7 @@ NASA-OSDR-Foundational-Model/
 |
 +-- environments/                          Conda environment definitions
 |   +-- kallisto_v0.51.1.yml               Phase 1: Kallisto + R
-|   +-- biofm.yml                          Phases 2-4: PyTorch + BioFM stack
+|   +-- biofm.yml                          Phases 2-4: PyTorch + Lightning stack
 |
 +-- 01_kallisto_reprocessing/              Phase 1: OSDR Kallisto pipeline
 |   +-- README.md                          Phase documentation
@@ -250,14 +256,18 @@ NASA-OSDR-Foundational-Model/
 |
 +-- 03_pretrain_performer/                 Phase 3: BulkFormer pre-training
 |   +-- README.md                          Phase documentation
-|   +-- model/bulkformer.py                BulkFormer model definition
-|   +-- pretrain_bulkformer.py             DDP training script (MLM)
+|   +-- model/bulkformer.py                BulkFormer model definition (pure PyTorch)
+|   +-- model/lit_bulkformer.py            LightningModule wrapper (training logic)
+|   +-- model/data.py                      LightningDataModule + BulkMLMDataset
+|   +-- configs/pretrain.yaml              Pre-training hyperparameters
+|   +-- pretrain_bulkformer.py             Lightning Trainer script
 |   +-- pretrain.slurm                     Multi-GPU SLURM job script
 |
 +-- 04_finetune_osdr/                      Phase 4: Fine-tuning on OSDR data
 |   +-- README.md                          Phase documentation
 |   +-- prepare_osdr_data.py               Kallisto output -> model input converter
-|   +-- finetune_bulkformer.py             Fine-tuning script (loads pretrained weights)
+|   +-- configs/finetune.yaml              Fine-tuning hyperparameters
+|   +-- finetune_bulkformer.py             Lightning Trainer script
 |   +-- finetune.slurm                     GPU SLURM job script
 |
 +-- data/                                  Runtime data directory (not committed)

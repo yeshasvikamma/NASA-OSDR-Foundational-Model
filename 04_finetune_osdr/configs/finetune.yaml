@@ -1,0 +1,50 @@
+# =============================================================================
+# BulkFormer Fine-tuning Configuration (OSDR)
+# =============================================================================
+# Override any value from the CLI:
+#   python finetune_bulkformer.py training.lr=5e-6 training.freeze_layers=1
+# =============================================================================
+
+model:
+  dim: 320
+  bins: 10
+  gb_repeat: 1
+  p_repeat: 2
+  bin_head: 8
+  full_head: 4
+
+training:
+  lr: 1.0e-5                      # 10x lower than pre-training
+  weight_decay: 0.01
+  batch_size: 4
+  max_epochs: 10
+  patience: 5
+  mask_ratio: 0.15
+  accumulate_grad_batches: 8
+  gradient_clip_val: 1.0
+  precision: "16-mixed"
+  compile: true
+  seed: 42
+  freeze_layers: 0                 # number of GBFormer blocks to freeze
+
+pretrained:
+  checkpoint: ../03_pretrain_performer/bulkformer_checkpoints/best_model.pt
+  config: ../03_pretrain_performer/bulkformer_checkpoints/config.json
+
+scheduler:
+  warmup_steps: 200
+  min_lr_ratio: 0.01
+
+data:
+  data_dir: ../data
+  osdr_dir: null                   # defaults to <data_dir>/osdr/processed
+  num_workers: 4
+
+logging:
+  project: "nasa-osdr-bulkformer"
+  run_name: null
+  log_every_n_steps: 10
+
+checkpoint:
+  dirpath: ./finetune_checkpoints
+  save_top_k: 3
