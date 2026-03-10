@@ -1,0 +1,29 @@
+name: biofm
+channels:
+  - pytorch
+  - nvidia
+  - pyg
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - h5py
+  - pyarrow
+  - pytorch::pytorch>=2.1
+  - pytorch::torchvision
+  - pytorch::torchaudio
+  - nvidia::cuda-toolkit
+  - pyg::pyg
+  - pip:
+    - performer-pytorch>=1.1.4
+    - fair-esm>=2.0.0
+    - archs4py>=1.0.4
+    - fastparquet
+    - safetensors
+    - einops

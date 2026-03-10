@@ -1,0 +1,72 @@
+# ==============================================================================
+# .gitignore -- NASA OSDR Foundational Model
+# ==============================================================================
+
+# ----------------------------- Data files -------------------------------------
+# Large data files are downloaded at runtime and should not be committed
+data/
+*.h5
+*.hdf5
+*.parquet
+*.pt
+*.safetensors
+
+# ----------------------------- Kallisto runtime output ------------------------
+# Per-dataset output directories created by setup_datasets.py
+OSD-*/
+OSD_datasets.txt
+duplicate_datasets.txt
+datasets_w_meta_issues.txt
+
+# ----------------------------- Large binary files -----------------------------
+# Kallisto reference indices (>200 MB each, must be provided separately)
+kallisto_indices/
+*.idx
+*.rda
+
+# ----------------------------- Model checkpoints -----------------------------
+bulkformer_checkpoints/
+finetune_checkpoints/
+*.ckpt
+
+# ----------------------------- Python ----------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# ----------------------------- Conda / Pip -----------------------------------
+*.conda
+*.tar.bz2
+
+# ----------------------------- Jupyter ----------------------------------------
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ----------------------------- OS files ---------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ----------------------------- IDE --------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.cursor/
+
+# ----------------------------- SLURM logs -------------------------------------
+*.out
+out_logs/
+slurm-*.out
+
+# ----------------------------- Misc -------------------------------------------
+*.log
+*.tmp
+*.bak
+config.env.bak

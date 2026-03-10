@@ -1,0 +1,5 @@
+id.accession,id.assay name,investigation.study assays.study assay measurement type,investigation.study assays.study assay technology type,study.characteristics.organism,assay.parameter value.library layout,assay.parameter value.spike-in quality control
+"OSD-47","OSD-47_transcription-profiling_rna-sequencing-(rna-seq)_illumina","transcription profiling","RNA Sequencing (RNA-Seq)","Mus musculus","SINGLE",NaN
+"OSD-104","OSD-104_transcription-profiling_rna-sequencing-(rna-seq)_Illumina","transcription profiling","RNA Sequencing (RNA-Seq)","Mus musculus","PAIRED",NaN
+"OSD-202","OSD-202_transcription-profiling_rna-sequencing-(rna-seq)_Illumina","transcription profiling","RNA Sequencing (RNA-Seq)","Mus musculus","SINGLE","ERCC ExFold Spike-In"
+"OSD-244","OSD-244_transcription-profiling_rna-sequencing-(rna-seq)_Illumina NovaSeq 6000","transcription profiling","RNA Sequencing (RNA-Seq)","Mus musculus","PAIRED","ERCC ExFold RNA Spike-In Mix"

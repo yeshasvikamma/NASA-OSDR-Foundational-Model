@@ -1,0 +1,9 @@
+name: kallisto_v0.51.1
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - kallisto==0.51.1
+  - r-base==4.4.1
+  - r-tidyverse==2.0.0
+  - r-plyr
