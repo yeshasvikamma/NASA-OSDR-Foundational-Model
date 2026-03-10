@@ -76,7 +76,7 @@ The following must be available on your HPC cluster:
 Clone this repository to your HPC working directory:
 
 ```bash
-git clone https://github.com/<your-username>/NASA-OSDR-Foundational-Model.git
+git clone https://github.com/yeshasvikamma/NASA-OSDR-Foundational-Model.git
 cd NASA-OSDR-Foundational-Model
 ```
 
