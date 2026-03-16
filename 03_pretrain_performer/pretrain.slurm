@@ -16,8 +16,13 @@
 # Configured for UC Berkeley Savio cluster.
 #
 # Savio GPU partitions use per-core scheduling -- memory is proportional to
-# the number of cores requested (do NOT use --mem). On savio4_gpu with A5000
-# nodes: 32 cores / 8 GPUs = 4 cores per GPU, so 2 GPUs get 8 cores.
+# the number of cores requested (do NOT use --mem).
+#
+# A5000 nodes (26 nodes): 32 cores / 8 GPUs = 4 cores per GPU (4:1 ratio).
+#   2 GPUs → --gres=gpu:A5000:2, --cpus-per-task=4, 8 cores total, ~128 GB RAM.
+# L40 nodes (3 nodes):    64 cores / 8 GPUs = 8 cores per GPU (8:1 ratio).
+#   2 GPUs → --gres=gpu:L40:2, --cpus-per-task=8, 16 cores total, ~198 GB RAM.
+#   L40 offers 46 GB VRAM vs A5000's 24 GB for larger batch sizes.
 #
 # BEFORE SUBMITTING: Set --account to your Savio project account (e.g. fc_bioinf).
 #

@@ -13,7 +13,8 @@
 # Configured for UC Berkeley Savio cluster.
 #
 # Requires ~40-60 GB RAM to hold full ARCHS4 expression matrices in memory.
-# On savio4_htc, memory is ~4.6 GB/core, so 16 cores provides ~74 GB.
+# On savio4_htc, memory is ~4.6-9.1 GB/core (256 or 512 GB nodes), so
+# 16 cores provides at least ~74 GB (up to ~146 GB on 512 GB nodes).
 #
 # BEFORE SUBMITTING: Set --account to your Savio project account (e.g. fc_bioinf).
 # ==============================================================================

@@ -19,6 +19,10 @@
 #   1. prepare_osdr_data.py  -- converts Kallisto output to model input format
 #   2. finetune_bulkformer.py -- loads pre-trained model and fine-tunes on OSDR
 #
+# GPU options on savio4_gpu:
+#   A5000 (26 nodes): --gres=gpu:A5000:2, --cpus-per-task=4 (4:1, 24 GB VRAM)
+#   L40   (3 nodes):  --gres=gpu:L40:2,   --cpus-per-task=8 (8:1, 46 GB VRAM)
+#
 # BEFORE SUBMITTING: Set --account to your Savio project account (e.g. fc_bioinf).
 #
 # Lightning auto-detects SLURM and configures DDP automatically.
