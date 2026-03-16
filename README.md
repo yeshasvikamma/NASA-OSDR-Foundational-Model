@@ -58,6 +58,8 @@ Each phase has its own `README.md` with detailed instructions, command-line opti
 
 ## Getting Started
 
+> **First time?** See the full **[Setup Guide (SETUP.md)](SETUP.md)** for step-by-step instructions covering SSH access, conda environment creation, verification checks, run order, and troubleshooting.
+
 ### Prerequisites
 
 This project is configured for the **UC Berkeley Savio** HPC cluster ([hardware config](https://docs-research-it.berkeley.edu/services/high-performance-computing/user-guide/hardware-config/)). The following must be available:
