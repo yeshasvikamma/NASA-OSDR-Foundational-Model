@@ -2,15 +2,15 @@
 #
 #SBATCH --job-name="kallisto_quant"
 #SBATCH --output=out_logs/%A_%a.out
-#SBATCH --partition=normal
-#SBATCH --mem=18000
+#SBATCH --partition=savio3_htc
+#SBATCH --account=CHANGE_ME
 #SBATCH --cpus-per-task=2
 #SBATCH --array=1-num_samples
 #
-#SBATCH --mail-user=myemail
 #SBATCH --mail-type=END
 
-#. ~/.profile
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "${SCRIPT_DIR}/../../../../config.env" 2>/dev/null || true
 
 echo "$SLURM_JOB_NAME"
 echo ""
@@ -21,7 +21,11 @@ echo "$HOSTNAME"
 echo "My SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
 echo ""
 
-conda activate kallisto_v0.51.1
+module load python
+if [ -n "$CONDA_INIT_SCRIPT" ] && [ -f "$CONDA_INIT_SCRIPT" ]; then
+    source "$CONDA_INIT_SCRIPT"
+fi
+conda activate "${KALLISTO_ENV:-kallisto_v0.51.1}"
 
 dataset=OSD-id
 in_dir=../../01-TG_Preproc/Fastq

@@ -60,15 +60,15 @@ Each phase has its own `README.md` with detailed instructions, command-line opti
 
 ### Prerequisites
 
-The following must be available on your HPC cluster:
+This project is configured for the **UC Berkeley Savio** HPC cluster. The following must be available:
 
-| Requirement | Used In | Notes |
-|-------------|---------|-------|
-| **SLURM** scheduler | All phases | Job submission and resource management |
-| **Conda** (Miniconda or Anaconda) | All phases | Environment management |
-| **AWS CLI** | Phase 1 | Download OSDR FASTQ files from S3 (no credentials required) |
-| **CUDA-capable GPUs** | Phases 3, 4 | 2+ GPUs recommended for distributed training |
-| **wget** | Phase 2 | Download ARCHS4 HDF5 files |
+| Requirement | Used In | Savio Notes |
+|-------------|---------|-------------|
+| **SLURM** scheduler | All phases | Pre-installed on Savio |
+| **Conda** (`module load python`) | All phases | Available via Savio module system |
+| **AWS CLI** | Phase 1 | Install in conda env; Savio nodes have internet access |
+| **CUDA-capable GPUs** | Phases 3, 4 | `savio3_gpu` (A40, 48 GB) or `savio4_gpu` (A5000, 24 GB) |
+| **wget** | Phase 2 | Pre-installed on Savio |
 | **Kallisto indices** | Phase 1 | Reference index files (provided separately) |
 
 ### Installation
@@ -103,12 +103,18 @@ Replace every `CHANGE_ME` value:
 
 | Setting | Example | Description |
 |---------|---------|-------------|
-| `HPC_PARTITION` | `"batch"` | Default SLURM partition |
-| `HPC_GPU_PARTITION` | `"gpu"` | GPU-enabled SLURM partition |
-| `HPC_EMAIL` | `"you@nasa.gov"` | Email for SLURM notifications |
-| `NUM_GPUS` | `2` | Number of GPUs for distributed training |
+| `HPC_ACCOUNT` | `"fc_bioinf"` | **Required** -- your Savio FCA/Condo account |
+| `HPC_EMAIL` | `"you@berkeley.edu"` | Email for SLURM notifications |
+| `HPC_PARTITION` | `"savio3_htc"` | CPU partition (default: `savio3_htc`) |
+| `HPC_GPU_PARTITION` | `"savio3_gpu"` | GPU partition (default: `savio3_gpu`) |
+| `GPU_TYPE` | `"A40"` | GPU type for `--gres` (A40, V100, A5000, L40) |
 
-All SLURM scripts source this file automatically.
+All SLURM scripts source this file automatically. You must also update `--account=CHANGE_ME` in each `.slurm` file with your Savio account, or use a `sed` one-liner:
+
+```bash
+# Replace CHANGE_ME in all SLURM scripts at once
+find . -name "*.slurm" -exec sed -i 's/--account=CHANGE_ME/--account=fc_bioinf/g' {} +
+```
 
 ---
 

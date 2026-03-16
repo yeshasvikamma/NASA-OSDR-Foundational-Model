@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --job-name="finetune_bulkformer"
 #SBATCH --output=finetune_%j.out
-#SBATCH --partition=gpu
-#SBATCH --gres=gpu:2
+#SBATCH --partition=savio3_gpu
+#SBATCH --account=CHANGE_ME
+#SBATCH --gres=gpu:A40:2
 #SBATCH --ntasks-per-node=2
-#SBATCH --mem=64000
 #SBATCH --cpus-per-task=8
 #SBATCH --time=12:00:00
 #SBATCH --mail-type=END,FAIL
@@ -13,13 +13,15 @@
 # finetune.slurm -- Fine-tune BulkFormer on OSDR data (Lightning + DDP)
 # ==============================================================================
 #
+# Configured for UC Berkeley Savio cluster.
+#
 # This script runs TWO steps:
 #   1. prepare_osdr_data.py  -- converts Kallisto output to model input format
 #   2. finetune_bulkformer.py -- loads pre-trained model and fine-tunes on OSDR
 #
-# Lightning auto-detects SLURM and configures DDP automatically.
+# BEFORE SUBMITTING: Set --account to your Savio project account (e.g. fc_bioinf).
 #
-# BEFORE SUBMITTING: Update #SBATCH lines with your HPC settings.
+# Lightning auto-detects SLURM and configures DDP automatically.
 # ==============================================================================
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -35,7 +37,7 @@ echo "Tasks:      ${SLURM_NTASKS}"
 echo "Start:      $(date)"
 echo ""
 
-# Activate conda
+module load python
 if [ -n "$CONDA_INIT_SCRIPT" ] && [ -f "$CONDA_INIT_SCRIPT" ]; then
     source "$CONDA_INIT_SCRIPT"
 fi
@@ -43,7 +45,6 @@ conda activate "${BIOFM_ENV:-biofm}"
 
 DATA="${DATA_DIR:-${SCRIPT_DIR}/../data}"
 
-# Step 1: Prepare OSDR data (single process, CPU only)
 echo ""
 echo "============================================"
 echo "Step 1: Preparing OSDR data"
@@ -52,7 +53,6 @@ python "${SCRIPT_DIR}/prepare_osdr_data.py" \
     --kallisto-dir "${KALLISTO_DIR:-${SCRIPT_DIR}/../01_kallisto_reprocessing}" \
     --data-dir "${DATA}"
 
-# Step 2: Fine-tune (Lightning DDP via srun)
 echo ""
 echo "============================================"
 echo "Step 2: Fine-tuning"

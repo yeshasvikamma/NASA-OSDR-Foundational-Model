@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --job-name="pretrain_bulkformer"
 #SBATCH --output=pretrain_%j.out
-#SBATCH --partition=gpu
-#SBATCH --gres=gpu:2
+#SBATCH --partition=savio3_gpu
+#SBATCH --account=CHANGE_ME
+#SBATCH --gres=gpu:A40:2
 #SBATCH --ntasks-per-node=2
-#SBATCH --mem=64000
 #SBATCH --cpus-per-task=8
 #SBATCH --time=48:00:00
 #SBATCH --mail-type=END,FAIL
@@ -13,13 +13,16 @@
 # pretrain.slurm -- Pre-train BulkFormer on ARCHS4 data (Lightning + DDP)
 # ==============================================================================
 #
-# BEFORE SUBMITTING: Update the #SBATCH lines above:
-#   --partition   : your GPU partition name
-#   --gres        : GPU type/count, e.g. gpu:a100:2, gpu:v100:2
-#   --ntasks-per-node : must equal the number of GPUs
-#   --mail-user   : your email
-#   --mem         : memory (64 GB recommended)
-#   --time        : wall time (depends on dataset size + GPU speed)
+# Configured for UC Berkeley Savio cluster.
+#
+# Savio GPU partitions use per-core scheduling -- memory is proportional to
+# the number of cores requested (do NOT use --mem). On savio3_gpu with A40
+# nodes: 16 cores / 2 GPUs = 8 cores per GPU, so 2 GPUs get 16 cores and
+# ~128 GB RAM total.
+#
+# BEFORE SUBMITTING: Set --account to your Savio project account (e.g. fc_bioinf).
+# To use savio4_gpu instead, change --partition and --gres=gpu:A5000:2 with
+# --cpus-per-task=4 (4:1 CPU:GPU ratio on savio4_gpu A5000 nodes).
 #
 # Lightning auto-detects SLURM environment variables and sets up DDP
 # automatically -- no need for torchrun.
@@ -36,11 +39,10 @@ echo "Node:       ${HOSTNAME}"
 echo "GPUs:       ${SLURM_GPUS_ON_NODE:-$NUM_GPUS}"
 echo "Tasks:      ${SLURM_NTASKS}"
 echo "CPUs/task:  ${SLURM_CPUS_PER_TASK}"
-echo "Memory:     ${SLURM_MEM_PER_NODE} MB"
 echo "Start:      $(date)"
 echo ""
 
-# Activate conda environment
+module load python
 if [ -n "$CONDA_INIT_SCRIPT" ] && [ -f "$CONDA_INIT_SCRIPT" ]; then
     source "$CONDA_INIT_SCRIPT"
 fi
@@ -48,8 +50,6 @@ conda activate "${BIOFM_ENV:-biofm}"
 
 cd "${SCRIPT_DIR}"
 
-# Lightning detects SLURM and configures DDP via the strategy="ddp" flag.
-# srun launches one process per task (= per GPU).
 srun python pretrain_bulkformer.py \
     data.data_dir="${DATA_DIR:-${SCRIPT_DIR}/../data}"
 

@@ -1,18 +1,21 @@
 #!/bin/bash
 #SBATCH --job-name="preprocess_archs4"
 #SBATCH --output=preprocess_archs4_%j.out
-#SBATCH --partition=normal
-#SBATCH --mem=64000
-#SBATCH --cpus-per-task=8
+#SBATCH --partition=savio3_htc
+#SBATCH --account=CHANGE_ME
+#SBATCH --cpus-per-task=16
 #SBATCH --time=8:00:00
 #SBATCH --mail-type=END,FAIL
 
 # ==============================================================================
 # preprocess_archs4.slurm -- SLURM wrapper for ARCHS4 preprocessing
 # ==============================================================================
-# Requires ~40-60 GB RAM to hold full ARCHS4 expression matrices in memory.
+# Configured for UC Berkeley Savio cluster.
 #
-# BEFORE SUBMITTING: Update the #SBATCH lines above with your HPC settings.
+# Requires ~40-60 GB RAM to hold full ARCHS4 expression matrices in memory.
+# On savio3_htc, memory is ~4 GB/core, so 16 cores provides ~64 GB.
+#
+# BEFORE SUBMITTING: Set --account to your Savio project account (e.g. fc_bioinf).
 # ==============================================================================
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -21,11 +24,10 @@ source "${SCRIPT_DIR}/../config.env" 2>/dev/null || true
 echo "Job ID: ${SLURM_JOB_ID}"
 echo "Node: ${HOSTNAME}"
 echo "CPUs: ${SLURM_CPUS_PER_TASK}"
-echo "Memory: ${SLURM_MEM_PER_NODE} MB"
 echo "Start: $(date)"
 echo ""
 
-# Activate the BioFM conda environment
+module load python
 if [ -n "$CONDA_INIT_SCRIPT" ] && [ -f "$CONDA_INIT_SCRIPT" ]; then
     source "$CONDA_INIT_SCRIPT"
 fi
