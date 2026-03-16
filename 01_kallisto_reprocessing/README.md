@@ -37,15 +37,13 @@ chmod u+rx make_dirs.sh
 chmod u+rx setup_datasets.py
 ```
 
-### Step 3: Edit SLURM template placeholders
+### Step 3: Set your Savio account in SLURM templates
 
-The SLURM templates in `template_scripts/` have placeholder values that need your HPC settings. Open each of the 4 `.slurm` files and update:
+The SLURM templates in `template_scripts/` are pre-configured for Savio (`savio3_htc` partition, no `--mem`). You only need to set your account:
 
-```
-#SBATCH --partition=normal      <-- replace "normal" with your partition
-#SBATCH --mail-user=myemail     <-- replace "myemail" with your email
-#SBATCH --mem=18000             <-- can reduce to 12000 if needed
-#SBATCH --cpus-per-task=2       <-- can reduce to 1 if needed
+```bash
+# Replace CHANGE_ME with your Savio account in all templates
+find template_scripts/ -name "*.slurm" -exec sed -i 's/--account=CHANGE_ME/--account=fc_YOURACCOUNT/g' {} +
 ```
 
 ### Step 4: Run the dataset setup script

@@ -5,6 +5,7 @@
 #SBATCH --partition=savio3_htc
 #SBATCH --account=CHANGE_ME
 #SBATCH --cpus-per-task=2
+#SBATCH --time=4:00:00
 #SBATCH --array=1-num_samples
 #
 #SBATCH --mail-type=END
