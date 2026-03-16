@@ -2,7 +2,7 @@
 #SBATCH --job-name="preprocess_archs4"
 #SBATCH --output=preprocess_archs4_%j.out
 #SBATCH --partition=savio3_htc
-#SBATCH --account=CHANGE_ME
+#SBATCH --account=pc_disconasabio
 #SBATCH --cpus-per-task=16
 #SBATCH --time=8:00:00
 #SBATCH --mail-type=END,FAIL

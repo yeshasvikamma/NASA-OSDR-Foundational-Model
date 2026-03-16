@@ -2,7 +2,7 @@
 #SBATCH --job-name="finetune_bulkformer"
 #SBATCH --output=finetune_%j.out
 #SBATCH --partition=savio3_gpu
-#SBATCH --account=CHANGE_ME
+#SBATCH --account=pc_disconasabio
 #SBATCH --gres=gpu:A40:2
 #SBATCH --ntasks-per-node=2
 #SBATCH --cpus-per-task=8

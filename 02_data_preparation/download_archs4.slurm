@@ -2,7 +2,7 @@
 #SBATCH --job-name="download_archs4"
 #SBATCH --output=download_archs4_%j.out
 #SBATCH --partition=savio3_htc
-#SBATCH --account=CHANGE_ME
+#SBATCH --account=pc_disconasabio
 #SBATCH --cpus-per-task=1
 #SBATCH --time=12:00:00
 #SBATCH --mail-type=END,FAIL
