@@ -39,7 +39,7 @@ chmod u+rx setup_datasets.py
 
 ### Step 3: Set your Savio account in SLURM templates
 
-The SLURM templates in `template_scripts/` are pre-configured for Savio (`savio3_htc` partition, no `--mem`). You only need to set your account:
+The SLURM templates in `template_scripts/` are pre-configured for Savio (`savio4_htc` partition, no `--mem`). You only need to set your account:
 
 ```bash
 # Replace CHANGE_ME with your Savio account in all templates

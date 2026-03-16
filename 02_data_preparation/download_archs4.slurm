@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name="download_archs4"
 #SBATCH --output=download_archs4_%j.out
-#SBATCH --partition=savio3_htc
+#SBATCH --partition=savio4_htc
 #SBATCH --account=pc_disconasabio
 #SBATCH --cpus-per-task=1
 #SBATCH --time=12:00:00
@@ -13,7 +13,7 @@
 # Configured for UC Berkeley Savio cluster.
 #
 # NOTE: Savio compute nodes have internet access, so downloads work from
-# savio3_htc. 1 core is sufficient for a download job.
+# savio4_htc. 1 core is sufficient for a download job.
 #
 # BEFORE SUBMITTING: Set --account to your Savio project account (e.g. fc_bioinf).
 # ==============================================================================

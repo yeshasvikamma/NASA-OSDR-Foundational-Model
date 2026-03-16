@@ -2,7 +2,7 @@
 #
 #SBATCH --job-name="kallisto_quant"
 #SBATCH --output=out_logs/%A_%a.out
-#SBATCH --partition=savio3_htc
+#SBATCH --partition=savio4_htc
 #SBATCH --account=pc_disconasabio
 #SBATCH --cpus-per-task=2
 #SBATCH --time=4:00:00

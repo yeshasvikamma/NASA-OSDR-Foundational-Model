@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH --job-name="pretrain_bulkformer"
 #SBATCH --output=pretrain_%j.out
-#SBATCH --partition=savio3_gpu
+#SBATCH --partition=savio4_gpu
 #SBATCH --account=pc_disconasabio
-#SBATCH --gres=gpu:A40:2
+#SBATCH --gres=gpu:A5000:2
 #SBATCH --ntasks-per-node=2
-#SBATCH --cpus-per-task=8
+#SBATCH --cpus-per-task=4
 #SBATCH --time=48:00:00
 #SBATCH --mail-type=END,FAIL
 
@@ -16,13 +16,10 @@
 # Configured for UC Berkeley Savio cluster.
 #
 # Savio GPU partitions use per-core scheduling -- memory is proportional to
-# the number of cores requested (do NOT use --mem). On savio3_gpu with A40
-# nodes: 16 cores / 2 GPUs = 8 cores per GPU, so 2 GPUs get 16 cores and
-# ~128 GB RAM total.
+# the number of cores requested (do NOT use --mem). On savio4_gpu with A5000
+# nodes: 32 cores / 8 GPUs = 4 cores per GPU, so 2 GPUs get 8 cores.
 #
 # BEFORE SUBMITTING: Set --account to your Savio project account (e.g. fc_bioinf).
-# To use savio4_gpu instead, change --partition and --gres=gpu:A5000:2 with
-# --cpus-per-task=4 (4:1 CPU:GPU ratio on savio4_gpu A5000 nodes).
 #
 # Lightning auto-detects SLURM environment variables and sets up DDP
 # automatically -- no need for torchrun.

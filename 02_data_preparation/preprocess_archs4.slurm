@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name="preprocess_archs4"
 #SBATCH --output=preprocess_archs4_%j.out
-#SBATCH --partition=savio3_htc
+#SBATCH --partition=savio4_htc
 #SBATCH --account=pc_disconasabio
 #SBATCH --cpus-per-task=16
 #SBATCH --time=8:00:00
@@ -13,7 +13,7 @@
 # Configured for UC Berkeley Savio cluster.
 #
 # Requires ~40-60 GB RAM to hold full ARCHS4 expression matrices in memory.
-# On savio3_htc, memory is ~4 GB/core, so 16 cores provides ~64 GB.
+# On savio4_htc, memory is ~4.6 GB/core, so 16 cores provides ~74 GB.
 #
 # BEFORE SUBMITTING: Set --account to your Savio project account (e.g. fc_bioinf).
 # ==============================================================================

@@ -67,7 +67,7 @@ This project is configured for the **UC Berkeley Savio** HPC cluster. The follow
 | **SLURM** scheduler | All phases | Pre-installed on Savio |
 | **Conda** (`module load python`) | All phases | Available via Savio module system |
 | **AWS CLI** | Phase 1 | Install in conda env; Savio nodes have internet access |
-| **CUDA-capable GPUs** | Phases 3, 4 | `savio3_gpu` (A40, 48 GB) or `savio4_gpu` (A5000, 24 GB) |
+| **CUDA-capable GPUs** | Phases 3, 4 | `savio4_gpu` (A5000, 24 GB VRAM), 8 GPUs/node |
 | **wget** | Phase 2 | Pre-installed on Savio |
 | **Kallisto indices** | Phase 1 | Reference index files (provided separately) |
 
@@ -105,9 +105,9 @@ Replace every `CHANGE_ME` value:
 |---------|---------|-------------|
 | `HPC_ACCOUNT` | `"fc_bioinf"` | **Required** -- your Savio FCA/Condo account |
 | `HPC_EMAIL` | `"you@berkeley.edu"` | Email for SLURM notifications |
-| `HPC_PARTITION` | `"savio3_htc"` | CPU partition (default: `savio3_htc`) |
-| `HPC_GPU_PARTITION` | `"savio3_gpu"` | GPU partition (default: `savio3_gpu`) |
-| `GPU_TYPE` | `"A40"` | GPU type for `--gres` (A40, V100, A5000, L40) |
+| `HPC_PARTITION` | `"savio4_htc"` | CPU partition (default: `savio4_htc`) |
+| `HPC_GPU_PARTITION` | `"savio4_gpu"` | GPU partition (default: `savio4_gpu`) |
+| `GPU_TYPE` | `"A5000"` | GPU type for `--gres` (A5000 on savio4_gpu) |
 
 All SLURM scripts source this file automatically. You must also update `--account=CHANGE_ME` in each `.slurm` file with your Savio account, or use a `sed` one-liner:
 
