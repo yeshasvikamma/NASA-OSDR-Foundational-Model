@@ -67,7 +67,7 @@ This project is configured for the **UC Berkeley Savio** HPC cluster ([hardware 
 | Requirement | Used In | Savio Notes |
 |-------------|---------|-------------|
 | **SLURM** scheduler | All phases | Pre-installed on Savio |
-| **Conda** (`module load python`) | All phases | Available via Savio module system |
+| **Conda** (`module load anaconda3`) | All phases | Available via Savio module system |
 | **AWS CLI** | Phase 1 | Install in conda env; Savio nodes have internet access |
 | **CUDA-capable GPUs** | Phases 3, 4 | `savio4_gpu`: A5000 (24 GB, 26 nodes) or L40 (46 GB, 3 nodes) |
 | **wget** | Phase 2 | Pre-installed on Savio |

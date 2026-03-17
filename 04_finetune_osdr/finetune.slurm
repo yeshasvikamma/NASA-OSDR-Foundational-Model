@@ -41,7 +41,7 @@ echo "Tasks:      ${SLURM_NTASKS}"
 echo "Start:      $(date)"
 echo ""
 
-module load python
+module load anaconda3
 if [ -n "$CONDA_INIT_SCRIPT" ] && [ -f "$CONDA_INIT_SCRIPT" ]; then
     source "$CONDA_INIT_SCRIPT"
 fi

@@ -74,7 +74,7 @@ cd NASA-OSDR-Foundational-Model
 Savio provides conda through the module system. Load it first:
 
 ```bash
-module load python
+module load anaconda3
 ```
 
 Then create both environments:
@@ -87,7 +87,14 @@ conda env create -f environments/kallisto_v0.51.1.yml
 conda env create -f environments/biofm.yml
 ```
 
-This will take 10-20 minutes. If `biofm.yml` fails on dependency resolution, try:
+This will take 10-20 minutes. If this is your first time using conda on Savio, also run:
+
+```bash
+conda init bash
+source ~/.bashrc
+```
+
+If `biofm.yml` fails on dependency resolution, try:
 
 ```bash
 conda env create -f environments/biofm.yml --solver=libmamba
@@ -308,10 +315,10 @@ For this project, clone to **scratch** if your data will exceed 10 GB (it will -
 
 ### `conda: command not found`
 
-You need to load the Python module first:
+You need to load the anaconda3 module first:
 
 ```bash
-module load python
+module load anaconda3
 conda --version
 ```
 
@@ -326,13 +333,14 @@ conda env create -f environments/biofm.yml --solver=libmamba
 Or create in steps:
 
 ```bash
-conda create -n biofm python=3.10 -y
+conda create -n biofm python=3.10 "numpy>=1.24,<2" "scipy>=1.10,<1.14" \
+    pandas scikit-learn matplotlib h5py pyarrow "setuptools<71" "libstdcxx-ng>=12" -c conda-forge -y
 conda activate biofm
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
-pip install lightning>=2.2 torchmetrics>=1.3 wandb omegaconf rich
+pip install torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/cu121
+pip install lightning==2.2.5 "torchmetrics>=1.3,<1.4" wandb omegaconf rich
 pip install performer-pytorch fair-esm archs4py
-pip install torch-geometric
-pip install fastparquet safetensors einops numpy pandas scipy scikit-learn matplotlib h5py pyarrow
+pip install "torch-geometric>=2.5"
+pip install fastparquet safetensors einops
 ```
 
 ### SLURM job fails with `Invalid partition`
@@ -352,7 +360,7 @@ This is expected on login nodes. On compute nodes, check:
 srun --partition=savio4_gpu --account=pc_disconasabio \
      --gres=gpu:A5000:1 --cpus-per-task=4 --time=0:10:00 --pty bash
 
-module load python
+module load anaconda3
 conda activate biofm
 python -c "import torch; print(torch.cuda.is_available())"
 nvidia-smi
@@ -374,6 +382,21 @@ The SLURM scripts handle this with `cd "${SCRIPT_DIR}"`.
 On `savio4_htc`, memory is proportional to cores requested. Increase `--cpus-per-task` to get more RAM:
 - 256 GB nodes: ~4.6 GB/core
 - 512 GB nodes: ~9.1 GB/core
+
+### Lightning or PyTorch import fails (`GLIBCXX`, `pkg_resources`, `torch._dynamo`)
+
+This usually means pip upgraded torch or numpy past the versions conda installed.
+The `biofm.yml` includes pip-section constraints (`torch>=2.3,<2.4`, `numpy>=1.24,<2`)
+to prevent this, but if the env is already broken, recreate it:
+
+```bash
+conda deactivate
+conda env remove -n biofm
+module load anaconda3
+conda env create -f environments/biofm.yml
+conda activate biofm
+python -c "import lightning; print(f'Lightning {lightning.__version__}')"
+```
 
 ### AWS S3 download fails in Kallisto jobs
 
