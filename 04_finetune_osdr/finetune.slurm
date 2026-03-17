@@ -42,6 +42,7 @@ echo "Start:      $(date)"
 echo ""
 
 module load anaconda3
+eval "$(conda shell.bash hook)"
 if [ -n "$CONDA_INIT_SCRIPT" ] && [ -f "$CONDA_INIT_SCRIPT" ]; then
     source "$CONDA_INIT_SCRIPT"
 fi
