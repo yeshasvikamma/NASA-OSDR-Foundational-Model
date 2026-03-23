@@ -5,6 +5,7 @@
 #SBATCH --partition="savio4_htc" 
 #SBATCH --mem=18000
 #SBATCH --cpus-per-task=2
+#SBATCH --time=4:00:00
 #SBATCH --array=1-num_samples
 #
 #SBATCH --mail-user=yeshasvikamma@berkeley.edu
