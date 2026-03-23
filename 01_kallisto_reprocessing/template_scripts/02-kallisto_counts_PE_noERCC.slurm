@@ -7,12 +7,10 @@
 #SBATCH --mem=18000
 #SBATCH --cpus-per-task=2
 #SBATCH --time=4:00:00
-#SBATCH --array=1-num_samples
+#SBATCH --array=1-num_samples%4
 #
 #SBATCH --mail-user=yeshasvikamma@berkeley.edu
 #SBATCH --mail-type=END
-
-#. ~/.profile
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/../../../../config.env" 2>/dev/null || true
@@ -35,33 +33,43 @@ echo "My SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
 echo ""
 
 dataset=OSD-id
-in_dir=../../01-TG_Preproc/Fastq
 out_dir=../../02-kallisto_counts
 REF=../../../kallisto_indices
 
 sample=$(cat ../samples.txt | sed -n ${SLURM_ARRAY_TASK_ID}p)
 
+SCRATCH_WORK="${KALLISTO_SCRATCH:-/global/scratch/users/${USER}/kallisto_tmp}/${dataset}/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
+mkdir -p "${SCRATCH_WORK}/fastq"
+mkdir -p "${SCRATCH_WORK}/counts"
+
+in_dir="${SCRATCH_WORK}/fastq"
+local_out="${SCRATCH_WORK}/counts"
+
+cleanup() {
+    echo "Cleaning up scratch: ${SCRATCH_WORK}"
+    rm -rf "${SCRATCH_WORK}"
+}
+trap cleanup EXIT
+
 echo ""
 echo "Dataset: ${dataset}"
 echo "SAMPLE: ${sample}"
+echo "Scratch: ${SCRATCH_WORK}"
 echo ""
 
 echo ""
 echo "copy trimmed fastq files from s3"
 echo ""
 
-# Get most recent version number
 version=$(aws s3 ls --no-sign-request --region us-west-2 s3://nasa-osdr/${dataset}/ | grep -oP 'version-\d+' | sort -t'-' -k2 -n | tail -1)
 echo "Using dataset version: ${version}"
 echo ""
 
-# Check that the version number was defined
 if [ -z "$version" ]; then
     echo "ERROR: Could not determine version for dataset ${dataset}. Exiting."
     exit 1
 fi
 
-# Run aws command to download the files
 aws s3 sync --no-sign-request --region us-west-2 s3://nasa-osdr/${dataset}/${version}/rna_seq/ ${in_dir}/ --exclude "*" --include "*${sample}_*trimmed.fastq.gz" --no-progress --cli-connect-timeout 30 --cli-read-timeout 30
 
 echo ""
@@ -133,11 +141,9 @@ echo ""
 echo "run kallisto count command"
 echo ""
 
-mkdir ${out_dir}/${sample}
-
 call="kallisto quant -t 2 \
 	-i ${REF}/Mmus-107_cdna_ncrna_index.idx \
-	-o ${out_dir}/${sample} \
+	-o ${local_out} \
 	${in_dir}/${sample}_R1_trimmed.fastq.gz ${in_dir}/${sample}_R2_trimmed.fastq.gz"
 
 
@@ -151,11 +157,11 @@ echo ""
 
 expected_lines=146191
 
-if [ ! -f "${out_dir}/${sample}/abundance.tsv" ]; then
+if [ ! -f "${local_out}/abundance.tsv" ]; then
     echo "ERROR: abundance.tsv not found for sample ${sample}. Exiting."
     exit 1
 fi
-actual_lines=$(wc -l < "${out_dir}/${sample}/abundance.tsv")
+actual_lines=$(wc -l < "${local_out}/abundance.tsv")
 if [ "$actual_lines" -ne "$expected_lines" ]; then
     echo "ERROR: abundance.tsv has ${actual_lines} lines but expected ${expected_lines}. Exiting."
     exit 1
@@ -173,7 +179,7 @@ echo "R version: "
 R --version
 echo ""
 
-Rscript --vanilla ens_genelevel_biot.r ${REF}/mapping_Mmus-107.rda ${out_dir}/${sample}/abundance.tsv ${out_dir}/${sample}/ens_gene_biot_abundance.tsv
+Rscript --vanilla ens_genelevel_biot.r ${REF}/mapping_Mmus-107.rda ${local_out}/abundance.tsv ${local_out}/ens_gene_biot_abundance.tsv
 
 echo ""
 echo "check Rscript output"
@@ -181,11 +187,11 @@ echo ""
 
 expected_lines=53512
 
-if [ ! -f "${out_dir}/${sample}/ens_gene_biot_abundance.tsv" ]; then
+if [ ! -f "${local_out}/ens_gene_biot_abundance.tsv" ]; then
     echo "ERROR: ens_gene_biot_abundance.tsv not found for sample ${sample}. Exiting."
     exit 1
 fi
-actual_lines=$(wc -l < "${out_dir}/${sample}/ens_gene_biot_abundance.tsv")
+actual_lines=$(wc -l < "${local_out}/ens_gene_biot_abundance.tsv")
 if [ "$actual_lines" -ne "$expected_lines" ]; then
     echo "ERROR: ens_gene_biot_abundance.tsv has ${actual_lines} lines but expected ${expected_lines}. Exiting."
     exit 1
@@ -195,10 +201,12 @@ fi
 
 
 echo ""
-echo "Remove trimmed fastq files"
+echo "Copy final results to home directory"
 echo ""
 
-rm ${in_dir}/${sample}_*trimmed.fastq.gz
+mkdir -p ${out_dir}/${sample}
+cp ${local_out}/abundance.tsv ${out_dir}/${sample}/
+cp ${local_out}/ens_gene_biot_abundance.tsv ${out_dir}/${sample}/
 
 
 echo "DONE"

@@ -21,6 +21,7 @@ Before running, make sure you have:
 2. **Conda** installed (`which conda`)
 3. **`kallisto_indices/`** directory copied to this folder (provided separately -- contains `.idx` and `.rda` files)
 4. **`config.env`** filled in with your HPC settings (one directory up)
+5. **Scratch storage** available at `/global/scratch/users/$USER/` (standard on Savio -- used for temporary FASTQ downloads and intermediate kallisto output to avoid filling home quota)
 
 ## Setup Steps
 
@@ -104,14 +105,24 @@ The `ens_gene_biot_abundance.tsv` files are what Phase 4 uses for fine-tuning.
 S3 (trimmed FASTQs)
     |
     v
-aws s3 sync --> local FASTQ files
+aws s3 sync --> scratch FASTQ files  (per-sample isolation on scratch)
     |
     v
-kallisto quant --> abundance.tsv (transcript-level)
+kallisto quant --> abundance.tsv on scratch (transcript-level)
     |
     v
-ens_genelevel_biot.r --> ens_gene_biot_abundance.tsv (gene-level)
+ens_genelevel_biot.r --> ens_gene_biot_abundance.tsv on scratch (gene-level)
     |
     v
-Cleanup: remove FASTQ files
+Copy final TSVs to home directory
+    |
+    v
+Cleanup: remove scratch working directory (via trap, even on failure)
 ```
+
+## Resource Management
+
+- **Scratch storage**: FASTQs download to `/global/scratch/users/$USER/kallisto_tmp/` to avoid home quota limits. Each array task gets its own isolated subdirectory.
+- **Concurrency throttle**: Array tasks limited to 4 simultaneous via `--array=1-N%4` (configurable in templates).
+- **Sequential datasets**: `run_kallisto.sh` chains datasets via `--dependency=afterany` so only one dataset processes at a time.
+- **Trap cleanup**: Each task cleans its scratch directory on exit (success or failure).
