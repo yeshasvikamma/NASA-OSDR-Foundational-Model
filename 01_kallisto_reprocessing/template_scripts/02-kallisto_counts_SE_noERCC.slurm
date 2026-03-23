@@ -17,14 +17,8 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/../../../../config.env" 2>/dev/null || true
 
-if [ -n "${HPC_PRE_CONDA:-}" ]; then
-    eval "$HPC_PRE_CONDA" 2>/dev/null || true
-fi
-if [ -n "${CONDA_INIT_SCRIPT:-}" ] && [ -f "${CONDA_INIT_SCRIPT}" ]; then
-    source "$CONDA_INIT_SCRIPT"
-fi
-eval "$(conda shell.bash hook 2>/dev/null)" || true
-conda activate "${KALLISTO_ENV:-kallisto_v0.51.1}"
+module load anaconda3/2024.02-1-11.4
+source activate "${KALLISTO_ENV:-kallisto_v0.51.1}"
 
 if ! command -v kallisto &>/dev/null; then
     echo "ERROR: kallisto not found -- conda environment activation failed. Exiting."
